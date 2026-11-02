@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PDFKit Local – Ferramentas PDF gratuitas e privadas</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f2f4f6;--surface:#fff;--ink:#14202b;--muted:#55646f;--line:#cbd3da;--accent:#c92d26;--accent-ink:#fff;--ok:#1d6b3a;--err:#a4231d;color-scheme:light}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1820;--surface:#17232d;--ink:#e8edf1;--muted:#9aa9b5;--line:#2c3b47;--accent:#ef5a52;--accent-ink:#1a0b0a;--ok:#5ccf89;--err:#ff8d86;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1820;--surface:#17232d;--ink:#e8edf1;--muted:#9aa9b5;--line:#2c3b47;--accent:#ef5a52;--accent-ink:#1a0b0a;--ok:#5ccf89;--err:#ff8d86;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+header{padding:52px 0 28px}
+h1{font-size:clamp(2.6rem,9vw,4.2rem);line-height:.95;letter-spacing:-.035em;margin:0 0 14px;font-weight:800}
+.lead{color:var(--muted);max-width:54ch;margin:0;font-size:1.1rem}
+h2{font-size:1.25rem;margin:44px 0 10px;letter-spacing:-.01em}
+p{margin:0 0 10px;max-width:64ch}
+.muted{color:var(--muted)}
+.tabs{display:flex;border-bottom:2px solid var(--line);overflow-x:auto}
+.tabs button{background:none;border:0;padding:12px 16px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.panel{background:var(--surface);border:1px solid var(--line);border-top:0;padding:24px}
+.drop{display:flex;flex-direction:column;align-items:center;gap:2px;padding:34px 16px;text-align:center;border:2px dashed var(--line);cursor:pointer}
+.drop span{color:var(--muted);font-size:.92rem}
+.drop:hover,.drop.over{border-color:var(--accent)}
+.drop:focus-within{outline:3px solid var(--accent);outline-offset:2px}
+.drop input{position:absolute;opacity:0;width:1px;height:1px}
+.files{list-style:none;margin:14px 0 0;padding:0}
+.files li{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
+.files .n{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.files .s{color:var(--muted);font-size:.85rem;margin-right:6px}
+.files button{width:32px;height:32px;border:1px solid var(--line);background:none;color:var(--ink);cursor:pointer;font:inherit}
+.files button:disabled{opacity:.35;cursor:default}
+.opts{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px}
+.f{display:flex;flex-direction:column;gap:4px;flex:1 1 200px}
+.f[hidden]{display:none}
+label{font-weight:600;font-size:.92rem}
+input[type=text],select{font:inherit;padding:10px 12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.go{margin-top:22px;width:100%;padding:14px;border:0;background:var(--accent);color:var(--accent-ink);font:inherit;font-weight:700;font-size:1.02rem;cursor:pointer}
+.go:disabled{opacity:.6;cursor:progress}
+#st{min-height:1.5em;margin:12px 0 0}
+#st[data-k=ok]{color:var(--ok)}#st[data-k=err]{color:var(--err)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.88rem;color:var(--muted);font-weight:600}
+.on{color:var(--ok);font-weight:600}.soon{color:var(--muted)}
+pre{background:var(--surface);border:1px solid var(--line);padding:14px 16px;overflow-x:auto;margin:0 0 10px;font:.92rem/1.5 ui-monospace,Consolas,monospace}
+ul{padding-left:20px;margin:0}li{margin-bottom:4px}
+footer{padding:44px 0 40px;color:var(--muted);font-size:.9rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>PDFKit Local</h1>
+  <p class="lead">Junte, extraia e gire páginas de PDF sem enviar o arquivo para lugar nenhum. Tudo acontece neste navegador.</p>
+</header>
+
+<main class="wrap">
+  <div class="tabs" role="tablist" aria-label="Ferramentas">
+    <button role="tab" data-t="merge" aria-selected="true">Juntar PDFs</button>
+    <button role="tab" data-t="extract" aria-selected="false">Extrair páginas</button>
+    <button role="tab" data-t="rotate" aria-selected="false">Girar páginas</button>
+  </div>
+  <section class="panel">
+    <p id="hint" class="muted"></p>
+    <label class="drop" id="drop" for="fi"><strong>Arraste PDFs para cá</strong><span>ou clique para escolher arquivos</span>
+      <input id="fi" type="file" accept="application/pdf,.pdf" multiple></label>
+    <ol class="files" id="files"></ol>
+    <div class="opts">
+      <div class="f" id="rf" hidden><label for="rg">Páginas</label><input id="rg" type="text" autocomplete="off"></div>
+      <div class="f" id="af" hidden><label for="an">Rotação</label>
+        <select id="an"><option value="90">90° (horário)</option><option value="180">180°</option><option value="270">270° (anti-horário)</option></select></div>
+    </div>
+    <button class="go" id="go" type="button">Juntar PDFs</button>
+    <p id="st" role="status"></p>
+  </section>
+
+  <h2>Privacidade</h2>
+  <p>Os arquivos são lidos e processados localmente pelo navegador, com a biblioteca pdf-lib. Esta versão não possui upload nem coleta de dados dos documentos, e essa regra deve valer nas próximas versões. Não prometemos anonimato absoluto nem segurança perfeita, e PDFs protegidos por senha não são suportados.</p>
+
+  <h2>Funcionalidades</h2>
+  <div class="tbl"><table>
+    <tr><th>Funcionalidade</th><th>Descrição</th><th>Estado</th></tr>
+    <tr><td>Juntar PDFs</td><td>Combina vários arquivos em um só, na ordem escolhida.</td><td class="on">Implementado</td></tr>
+    <tr><td>Extrair páginas</td><td>Cria um PDF com páginas ou intervalos, como 1-3, 5.</td><td class="on">Implementado</td></tr>
+    <tr><td>Girar páginas</td><td>Rotação de 90°, 180° ou 270° nas páginas escolhidas.</td><td class="on">Implementado</td></tr>
+    <tr><td>Adicionar arquivos</td><td>Seleção e área de arrastar e soltar.</td><td class="on">Implementado</td></tr>
+    <tr><td>Comprimir PDF</td><td>Reduzir o tamanho com opções de qualidade.</td><td class="soon">Planejado</td></tr>
+    <tr><td>Imagens para PDF</td><td>Converter imagens em um documento PDF.</td><td class="soon">Planejado</td></tr>
+  </table></div>
+
+  <h2>Para quem é</h2>
+  <p>Estudantes, profissionais administrativos, pequenos negócios, professores, freelancers e qualquer pessoa que precise organizar PDFs sem instalar um programa.</p>
+
+  <h2>Executar o projeto</h2>
+  <p class="muted">Requer Node.js 18 ou superior. Stack: TypeScript, Vite, pdf-lib, HTML e CSS.</p>
+<pre>npm install
+npm run dev
+
+npm run build
+npm run preview</pre>
+
+  <h2>Roadmap</h2>
+  <ul>
+    <li>Reordenar arquivos antes de juntar (já disponível)</li>
+    <li>Compressão de PDF, explicando os limites técnicos</li>
+    <li>Converter imagens para PDF</li>
+    <li>Miniaturas e seleção visual de páginas</li>
+    <li>Testes automatizados e integração contínua</li>
+    <li>Demonstração online e documentação em inglês</li>
+  </ul>
+</main>
+
+<footer class="wrap">Código aberto sob licença MIT. Contribuições são bem-vindas no GitHub, no repositório pdfkit-local.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+const { PDFDocument, degrees } = PDFLib;
+const $ = id => document.getElementById(id);
+const C = {
+  merge:{h:'Adicione dois ou mais PDFs e organize a ordem antes de juntar.',a:'Juntar PDFs',r:''},
+  extract:{h:'Adicione um PDF e informe as páginas que deseja manter.',a:'Extrair páginas',r:'Ex.: 1-3, 5'},
+  rotate:{h:'Adicione um PDF. Deixe as páginas em branco para girar todas.',a:'Girar páginas',r:'Ex.: 2, 4-6 (vazio = todas)'}
+};
+let tool='merge', files=[];
+const st=(m,k='')=>{$('st').textContent=m;$('st').dataset.k=k};
+
+function ranges(txt,total,all){
+  txt=txt.trim();
+  if(!txt){ if(all) return [...Array(total).keys()]; throw new Error('Informe as páginas, por exemplo: 1-3, 5.'); }
+  const out=[];
+  for(const raw of txt.split(',')){
+    const p=raw.trim(); if(!p) continue;
+    const m=p.match(/^(\d+)(?:\s*-\s*(\d+))?$/);
+    if(!m) throw new Error('Intervalo inválido: ' + p + '. Use o formato 1-3, 5.');
+    const a=+m[1], b=m[2]?+m[2]:a;
+    if(a<1||b<a||b>total) throw new Error(p + ' está fora do documento (1 a ' + total + ').');
+    for(let i=a;i<=b;i++) if(!out.includes(i-1)) out.push(i-1);
+  }
+  if(!out.length) throw new Error('Nenhuma página válida informada.');
+  return out;
+}
+const load=async f=>PDFDocument.load(await f.arrayBuffer());
+
+function render(){
+  const c=C[tool];
+  $('hint').textContent=c.h; $('go').textContent=c.a; $('rg').placeholder=c.r;
+  $('rf').hidden=tool==='merge'; $('af').hidden=tool!=='rotate'; $('fi').multiple=tool==='merge';
+  document.querySelectorAll('[data-t]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.t===tool)));
+  $('files').replaceChildren(...files.map((f,i)=>{
+    const li=document.createElement('li');
+    const n=document.createElement('span'); n.className='n'; n.textContent=f.name;
+    const s=document.createElement('span'); s.className='s'; s.textContent=Math.round(f.size/1024)+' KB';
+    li.append(n,s);
+    const b=(t,title,fn,dis)=>{const e=document.createElement('button');e.type='button';e.textContent=t;e.disabled=!!dis;e.setAttribute('aria-label',title+': '+f.name);e.onclick=fn;return e};
+    if(tool==='merge') li.append(b('↑','Mover para cima',()=>mv(i,-1),i===0), b('↓','Mover para baixo',()=>mv(i,1),i===files.length-1));
+    li.append(b('✕','Remover',()=>{files.splice(i,1);render()}));
+    return li;
+  }));
+}
+function mv(i,d){[files[i],files[i+d]]=[files[i+d],files[i]];render()}
+function add(list){
+  const p=[...list].filter(f=>f.type==='application/pdf'||/\.pdf$/i.test(f.name));
+  if(!p.length) return st('Nenhum PDF encontrado. Selecione arquivos .pdf.','err');
+  files = tool==='merge' ? files.concat(p) : [p[0]];
+  st(''); render();
+}
+function save(bytes,name){
+  const u=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
+  const a=Object.assign(document.createElement('a'),{href:u,download:name});
+  document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),1000);
+}
+async function run(){
+  const btn=$('go');
+  try{
+    if(!files.length) throw new Error('Adicione um arquivo PDF primeiro.');
+    btn.disabled=true; st('Processando no seu navegador…');
+    const base=files[0].name.replace(/\.pdf$/i,''); let out,name;
+    if(tool==='merge'){
+      if(files.length<2) throw new Error('Adicione pelo menos 2 PDFs para juntar.');
+      const d=await PDFDocument.create();
+      for(const f of files){const s=await load(f);(await d.copyPages(s,s.getPageIndices())).forEach(p=>d.addPage(p))}
+      out=await d.save(); name='juntado.pdf';
+    }else if(tool==='extract'){
+      const s=await load(files[0]); const idx=ranges($('rg').value,s.getPageCount(),false);
+      const d=await PDFDocument.create(); (await d.copyPages(s,idx)).forEach(p=>d.addPage(p));
+      out=await d.save(); name=base+'-paginas.pdf';
+    }else{
+      const d=await load(files[0]); const idx=ranges($('rg').value,d.getPageCount(),true); const pg=d.getPages();
+      idx.forEach(i=>pg[i].setRotation(degrees((pg[i].getRotation().angle+Number($('an').value))%360)));
+      out=await d.save(); name=base+'-girado.pdf';
+    }
+    save(out,name); st('Pronto. O arquivo '+name+' foi baixado.','ok');
+  }catch(e){ st(e.message||'Não foi possível processar o PDF. Verifique se ele não está protegido ou corrompido.','err') }
+  finally{ btn.disabled=false }
+}
+document.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{tool=b.dataset.t;if(tool!=='merge')files=files.slice(0,1);st('');render()}));
+$('fi').addEventListener('change',e=>{add(e.target.files);e.target.value=''});
+const dz=$('drop');
+['dragenter','dragover'].forEach(v=>dz.addEventListener(v,e=>{e.preventDefault();dz.classList.add('over')}));
+['dragleave','drop'].forEach(v=>dz.addEventListener(v,()=>dz.classList.remove('over')));
+dz.addEventListener('drop',e=>{e.preventDefault();add(e.dataTransfer.files)});
+$('go').addEventListener('click',run);
+render();
+</script>
+</body>
+</html>
